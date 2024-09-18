@@ -20,8 +20,8 @@ def fetch(url, file_name):
     # normalizes the returned json and then adds it to a csv file
     # prints all the information
     try:
-        print(transit_dict)
         file = pd.json_normalize(transit_dict['entity'])
+        file.to_csv(path_or_buf = f"{cwd}\{file_name}.csv")
         return file
     except Exception as error:
         print(error)
