@@ -3,12 +3,14 @@
 import geopandas
 from gtfs_feeds import fetch
 from pprint import pprint
-import sql_connection
+from sqlalchemy import create_engine
 
 class VehicleData:
-    def __init__(self, file=None) -> None:
+    def __init__(self, connection, table_name = "vehicles", file=None) -> None:
         self.vhpos_path = "http://transitdata.nashvillemta.org/TMGTFSRealTimeWebService/vehicle/vehiclepositions.pb"
         self.file = file
+        self.connection = connection
+        self.table_name = table_name
         self.gdf = None
         self.update_vhpos()
 
@@ -25,8 +27,12 @@ class VehicleData:
             pprint(self.gdf)
         else:
             print("GeoDataFrame is empty")
-
+    
     # adds the GeoDatabase to Postgresql as a PostGIS database
+    def create_db(self):
+        engine = create_engine(self.table_name, self.connection, if_exists = "replace")
+        self.gdf.to_postgis()
+
 
 vh = VehicleData()
 vh.print_gdf()
