@@ -25,7 +25,7 @@ def fetch(url, file_name):
 
         # creates the csv file if a name for the file is given.
         if file_name: 
-            file.to_csv(path_or_buf = f"{cwd}\{file_name}.csv")
+            file.to_csv(path_or_buf = fr"{cwd}\{file_name}.csv")
         return file
     
     except Exception as error:
