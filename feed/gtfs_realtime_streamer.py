@@ -1,10 +1,9 @@
 import requests
 from google.transit import gtfs_realtime_pb2
 from typing import List
-from gtfs_realtime_feed import GTFSRealtimeFeed
-from gtfs_trip_updates import TripUpdate
-from gtfs_vehicle_positions import VehiclePosition
-from gtfs_service_alerts import ServiceAlert
+
+from data import TripUpdate, VehiclePosition, ServiceAlert
+from feed import GTFSRealtimeFeed
 
 class GTFSRealtimeStreamer:
     """
