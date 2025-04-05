@@ -1,0 +1,85 @@
+-- ============================
+-- Table: trip_updates
+-- ============================
+CREATE TABLE trip_updates (
+    id SERIAL PRIMARY KEY,
+    trip_id TEXT,
+    route_id TEXT,
+    direction_id INTEGER,
+    start_time TEXT,
+    start_date TEXT,
+    schedule_relationship TEXT,
+    vehicle_id TEXT,
+    vehicle_label TEXT,
+    vehicle_license_plate TEXT,
+    delay INTEGER,
+    timestamp BIGINT -- UNIX time the update was recorded
+);
+
+-- ============================
+-- Table: stop_time_updates
+-- ============================
+CREATE TABLE stop_time_updates (
+    id SERIAL PRIMARY KEY,
+    trip_update_id INTEGER REFERENCES trip_updates(id) ON DELETE CASCADE,
+    stop_sequence INTEGER,
+    stop_id TEXT,
+    arrival_delay INTEGER,
+    arrival_time BIGINT,
+    arrival_uncertainty INTEGER,
+    departure_delay INTEGER,
+    departure_time BIGINT,
+    departure_uncertainty INTEGER,
+    schedule_relationship TEXT,
+    timestamp BIGINT -- UNIX time the stop time update was recorded
+);
+
+-- ============================
+-- Table: vehicle_positions
+-- ============================
+CREATE TABLE vehicle_positions (
+    id SERIAL PRIMARY KEY,
+    vehicle_id TEXT,
+    vehicle_label TEXT,
+    vehicle_license_plate TEXT,
+    trip_id TEXT,
+    route_id TEXT,
+    direction_id INTEGER,
+    start_time TEXT,
+    start_date TEXT,
+    schedule_relationship TEXT,
+    current_stop_sequence INTEGER,
+    stop_id TEXT,
+    current_status TEXT,
+    congestion_level TEXT,
+    occupancy_status TEXT,
+    geom GEOMETRY(Point, 4326), -- Geospatial field
+    bearing FLOAT,
+    odometer FLOAT,
+    speed FLOAT,
+    timestamp BIGINT -- UNIX time the vehicle position was recorded
+);
+
+-- ============================
+-- Table: service_alerts
+-- ============================
+CREATE TABLE service_alerts (
+    id TEXT PRIMARY KEY,
+    header_text TEXT,
+    description_text TEXT,
+    cause TEXT,
+    effect TEXT,
+    timestamp BIGINT -- UNIX time the alert was recorded
+);
+
+-- ============================
+-- Optional Indexes for Performance
+-- ============================
+-- Index for geospatial queries
+CREATE INDEX idx_vehicle_positions_geom ON vehicle_positions USING GIST (geom);
+
+-- Timestamp indexes for faster filtering by time
+CREATE INDEX idx_trip_updates_timestamp ON trip_updates (timestamp);
+CREATE INDEX idx_stop_time_updates_timestamp ON stop_time_updates (timestamp);
+CREATE INDEX idx_vehicle_positions_timestamp ON vehicle_positions (timestamp);
+CREATE INDEX idx_service_alerts_timestamp ON service_alerts (timestamp);
